@@ -63,6 +63,9 @@ const pseudoInput=document.getElementById('pseudoInput');
 const genBtn=document.getElementById('genBtn');
 const counterEl=document.getElementById('counter');
 
+let validatedRows = new Array(ROWS).fill(false);
+let validatedCols = new Array(COLS).fill(false);
+
 function showPopup(msg){
   const pop=document.createElement('div');
   pop.className='popup';
@@ -88,23 +91,26 @@ function checkGrid(cells){
   let rowValid = new Array(ROWS).fill(false);
   let colValid = new Array(COLS).fill(false);
 
+  // Lignes
   for(let r=0;r<ROWS;r++){
     if([...Array(COLS).keys()].every(c=>cells[r*COLS+c].querySelector('input').checked)){
       rowValid[r]=true;
       [...Array(COLS).keys()].forEach(c=>cells[r*COLS+c].classList.add('highlight'));
-    }
+      if(!validatedRows[r]) { showPopup(`✅ Ligne ${r+1} validée !`); validatedRows[r]=true; }
+    } else validatedRows[r]=false;
   }
+
+  // Colonnes
   for(let c=0;c<COLS;c++){
     if([...Array(ROWS).keys()].every(r=>cells[r*COLS+c].querySelector('input').checked)){
       colValid[c]=true;
       [...Array(ROWS).keys()].forEach(r=>cells[r*COLS+c].classList.add('highlight'));
-    }
+      if(!validatedCols[c]) { showPopup(`✅ Colonne ${c+1} validée !`); validatedCols[c]=true; }
+    } else validatedCols[c]=false;
   }
 
   counterEl.textContent=`Lignes validées: ${rowValid.filter(v=>v).length} | Colonnes validées: ${colValid.filter(v=>v).length}`;
 
-  rowValid.forEach((v,r)=>{if(v) showPopup(`✅ Ligne ${r+1} validée !`);});
-  colValid.forEach((v,c)=>{if(v) showPopup(`✅ Colonne ${c+1} validée !`);});
   if(cells.every(cell=>cell.querySelector('input').checked)){showPopup("🎉 BINGO COMPLET !");confettiBurst();}
 }
 
